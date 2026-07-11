@@ -1,0 +1,27 @@
+*{
+    margin: 0px;
+    padding: 0px;
+    color: #ffffff;
+}
+#navbar{
+    height:60px;
+    background-color: #0f1111;
+}
+#Search_Button{
+    color:#ffffff;
+    background-color:#f0880f;
+}
+#Search_Button:hover{
+    background-color: #f0a040;
+}
+#logo{
+    color: #f0880f;
+    font-size: 25px;
+}
+a{
+    /* padding: 20px; giving space inside the links */
+    margin-right: 200px; /* giving space between links */
+}
+#logo{
+    text-decoration: none;
+}
