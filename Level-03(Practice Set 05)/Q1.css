@@ -1,0 +1,10 @@
+div{
+    height: 100px;
+    width: 100px;
+    background-image: url("dog.jpg");
+    background-size: cover;
+    color:rgb(206, 12, 86);
+    position: fixed;
+    right: 0px;
+    top: 50px;
+}
