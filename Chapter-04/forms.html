@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration Form</title>
+    <style>
+        /* Import Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Page background */
+body{
+    background: linear-gradient(135deg,#667eea,#764ba2);
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+/* Form container */
+form{
+    background:white;
+    padding:30px 40px;
+    border-radius:12px;
+    width:380px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* Heading */
+h1{
+    text-align:center;
+    margin-bottom:20px;
+    color:#333;
+}
+
+/* Labels */
+label{
+    font-size:14px;
+    font-weight:500;
+    color:#444;
+}
+
+/* Inputs */
+input[type="text"],
+input[type="tel"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+textarea{
+    width:100%;
+    padding:10px;
+    margin-top:5px;
+    border:1px solid #ccc;
+    border-radius:6px;
+    outline:none;
+    transition:0.3s;
+}
+
+/* Input focus effect */
+input:focus,
+textarea:focus{
+    border-color:#667eea;
+    box-shadow:0 0 5px rgba(102,126,234,0.5);
+}
+
+/* Radio & checkbox spacing */
+input[type="radio"],
+input[type="checkbox"]{
+    margin-right:6px;
+}
+
+/* Submit button */
+input[type="submit"]{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:#667eea;
+    color:white;
+    font-size:16px;
+    font-weight:500;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+/* Button hover */
+input[type="submit"]:hover{
+    background:#5a67d8;
+    transform:scale(1.03);
+}
+    </style>
+</head>
+<body>
+    <form action="#" method="post">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="phone">Phone Number:</label>
+        <input type="tel" id="phone" name="phone" required><br><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <label for="dob">Date of Birth:</label>
+        <input type="date" id="dob" name="dob" required><br><br>
+
+        <label>Gender:</label><br>
+        <input type="radio" id="male" name="gender" value="male">
+        <label for="male">Male</label><br>
+        <input type="radio" id="female" name="gender" value="female">
+        <label for="female">Female</label><br>
+        <input type="radio" id="other" name="gender" value="other">
+        <label for="other">Other</label><br><br>
+
+        <label>Subscription Plan:</label><br>
+        <input type="radio" id="basic" name="subscription" value="basic">
+        <label for="basic">Basic</label><br>
+        <input type="radio" id="premium" name="subscription" value="premium">
+        <label for="premium">Premium</label><br>
+        <input type="radio" id="vip" name="subscription" value="vip">
+        <label for="vip">VIP</label><br><br>
+
+        <input type="checkbox" id="terms" name="terms" value="agree" required>
+        <label for="terms">I agree to all the terms and conditions</label><br><br>
+
+        <label for="feedback">Feedback:</label><br>
+        <textarea id="feedback" name="feedback" rows="4" cols="50"></textarea><br><br>
+
+        <input type="submit" value="Submit">
+    </form> 
+</body>
+</html>

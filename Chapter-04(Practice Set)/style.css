@@ -1,0 +1,75 @@
+/* General Page Styling */
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f4f7fb;
+    text-align: center;
+    margin: 20px;
+}
+
+/* Caption Styling */
+caption{
+    font-size: 22px;
+    font-weight: bold;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+/* Table Styling */
+table{
+    width: 70%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Table Header */
+thead{
+    background-color: #0b5ed7;
+    color: white;
+}
+
+thead.newzealand{
+    background-color: #010914;
+    color: white;
+}
+
+h1[data-country]{
+    color: #0b5ed7; 
+}
+
+.hello:nth-child(2){
+    color: red;
+}
+
+th, td{
+    padding: 12px;
+    border: 1px solid #ddd;
+}
+
+/* Zebra Rows */
+tbody tr:nth-child(even){
+    background-color: #f2f2f2;
+}
+
+/* Hover Effect */
+tbody tr:hover{
+    background-color: #e6f0ff;
+}
+
+/* Headings */
+h1{
+    margin-top: 30px;
+    color: #080e17;
+}
+
+/* Result Text */
+p{
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Player Awards */
+h3{
+    color: #333;
+}

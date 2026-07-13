@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelEasy- Book your trip with us.</title>
+    <style>
+        /* Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+}
+
+/* Page Background */
+body{
+    background: linear-gradient(135deg,#4facfe,#00f2fe);
+    padding:40px;
+}
+
+/* Heading */
+h1{
+    text-align:center;
+    margin-bottom:25px;
+    color:#ffffff;
+    font-size:32px;
+}
+
+/* Form Container */
+form{
+    max-width:700px;
+    margin:auto;
+    background:white;
+    padding:30px;
+    border-radius:12px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* Fieldsets */
+fieldset{
+    border:1px solid #ddd;
+    border-radius:8px;
+    padding:20px;
+    margin-bottom:20px;
+}
+
+/* Legend */
+legend{
+    font-weight:600;
+    color:#0077ff;
+    padding:0 10px;
+}
+
+/* Labels */
+label{
+    font-size:14px;
+    font-weight:500;
+    color:#444;
+}
+
+/* Inputs */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+input[type="number"],
+select,
+textarea{
+    width:100%;
+    padding:10px;
+    margin-top:6px;
+    border:1px solid #ccc;
+    border-radius:6px;
+    outline:none;
+    transition:0.3s;
+}
+
+/* Focus Effect */
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:#4facfe;
+    box-shadow:0 0 6px rgba(79,172,254,0.5);
+}
+
+/* Radio & Checkbox spacing */
+input[type="radio"],
+input[type="checkbox"]{
+    margin-right:8px;
+    margin-top:10px;
+}
+
+/* Special Requests textarea */
+textarea{
+    resize:none;
+}
+
+/* Submit Button */
+input[type="submit"]{
+    width:100%;
+    padding:14px;
+    background:#0077ff;
+    border:none;
+    color:white;
+    font-size:16px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+/* Button Hover */
+input[type="submit"]:hover{
+    background:#005fcc;
+    transform:scale(1.03);
+}
+    </style>
+</head>
+<body>
+    <h1>Trip to Japan</h1>
+    <form action="#" method="post">
+        <!-- Personal Information -->
+        <fieldset>
+            <legend>Personal Information</legend>
+            <label for="fullname">Full Name:</label>
+            <input type="text" id="fullname" name="fullname" required><br><br>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required><br><br>
+
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" required><br><br>
+
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob" name="dob" required><br><br>
+        </fieldset>
+
+        <!-- Travel Details -->
+        <fieldset>
+            <legend>Travel Details</legend>
+            <label for="departure">Departure City:</label>
+            <input type="text" id="departure" name="departure" required><br><br>
+
+            <label for="destination">Destination:</label>
+            <input type="text" id="destination" name="destination" value="Japan" readonly><br><br>
+
+            <label for="departure-date">Departure Date:</label>
+            <input type="date" id="departure-date" name="departure-date" required><br><br>
+
+            <label for="return-date">Return Date:</label>
+            <input type="date" id="return-date" name="return-date" required><br><br>
+
+            <label for="adults">Number of Adults:</label>
+            <input type="number" id="adults" name="adults" min="1" required><br><br>
+
+            <label for="children">Number of Children:</label>
+            <input type="number" id="children" name="children" min="0"><br><br>
+
+            <label for="class">Travel Class:</label>
+            <select id="class" name="class">
+                <option value="economy">Economy</option>
+                <option value="business">Business</option>
+                <option value="first">First Class</option>
+            </select><br><br>
+        </fieldset>
+
+        <!-- Accommodation Preferences -->
+        <fieldset>
+            <legend>Accommodation Preferences</legend>
+            <label>Accommodation Type:</label><br>
+            <input type="radio" id="hotel" name="accommodation" value="hotel">
+            <label for="hotel">Hotel</label><br>
+            <input type="radio" id="resort" name="accommodation" value="resort">
+            <label for="resort">Resort</label><br>
+            <input type="radio" id="villa" name="accommodation" value="villa">
+            <label for="villa">Villa</label><br><br>
+
+            <label for="room-type">Room Type:</label>
+            <select id="room-type" name="room-type">
+                <option value="single">Single</option>
+                <option value="double">Double</option>
+                <option value="suite">Suite</option>
+            </select><br><br>
+        </fieldset>
+
+        <!-- Additional Services -->
+        <fieldset>
+            <legend>Additional Services</legend>
+            <input type="checkbox" id="car-rental" name="services" value="car-rental">
+            <label for="car-rental">Car Rental</label><br>
+            <input type="checkbox" id="tours" name="services" value="tours">
+            <label for="tours">Guided Tours</label><br>
+            <input type="checkbox" id="insurance" name="services" value="insurance">
+            <label for="insurance">Travel Insurance</label><br><br>
+        </fieldset>
+
+        <!-- Special Requests -->
+        <label for="requests">Special Requests:</label><br>
+        <textarea id="requests" name="requests" rows="4" cols="50"></textarea><br><br>
+
+        <!-- Terms and Conditions -->
+        <input type="checkbox" id="terms" name="terms" value="agree" required>
+        <label for="terms">I agree to the terms and conditions</label><br><br>
+
+        <!-- Submit Button -->
+        <input type="submit" value="Book Now">
+    </form>
