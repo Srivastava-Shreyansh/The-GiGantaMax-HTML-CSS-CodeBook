@@ -1,0 +1,91 @@
+/* Reset */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Logo */
+.tesla-logo{
+position: fixed;
+top: 20px;
+left: 40px;
+width: 120px;
+color: white;
+z-index: 1000;
+}
+
+.tesla-logo svg{
+width: 100%;
+height: auto;
+}
+
+/* Hero Section */
+.hero{
+    position:relative;
+    height:100vh;
+    width:100%;
+}
+
+/* Background Image */
+.hero img{
+    width:100%;
+    height:100vh;
+    object-fit:cover;
+}
+
+/* Text Content */
+.hero-content{
+    position:absolute;
+    top:20%;
+    left:50%;
+    transform:translateX(-50%);
+    text-align:center;
+    color:whitesmoke;
+}
+
+/* Headings */
+.hero-content h1{
+    font-size:60px;
+    font-weight:500;
+}
+
+.hero-content h4{
+    margin-top:10px;
+    font-size:18px;
+    font-weight:400;
+}
+
+/* Link */
+.hero-content a{
+    color:whitesmoke;
+    text-decoration:underline;
+}
+
+/* Buttons */
+.button-group{
+    margin-top:30px;
+}
+
+.button-group a{
+    display:inline-block;
+    padding:12px 40px;
+    margin:10px;
+    border-radius:5px;
+    text-decoration:none;
+    font-size:14px;
+}
+
+/* Primary Button */
+.primary{
+    background:black;
+    color:white;
+}
+
+/* Secondary Button */
+.secondary{
+    background:black;
+    color:black;
+    border:1px solid black;
+}
