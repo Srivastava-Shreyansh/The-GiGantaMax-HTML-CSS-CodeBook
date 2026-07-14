@@ -1,0 +1,230 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  color: white;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+}
+
+header {
+  position: fixed;
+  width: 100%;
+}
+@font-face {
+  font-family: ManRope;
+  src: url(./Manrope-VariableFont_wght.woff2);
+}
+@font-face {
+  font-family: Neue Machina-Light;
+  src: url(./NeueMachina-Light.woff2);
+}
+@font-face {
+  font-family: Neue Machina-Regular;
+  src: url(./NeueMachina-Regular.woff2);
+}
+
+body {
+  background: rgb(1, 1, 1);
+}
+#parent {
+  height: 100%;
+  width: 100%;
+  background-color: rgb(1, 1, 1);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  position: relative;
+}
+#parent a {
+  color: white;
+  text-decoration: none;
+}
+#child {
+  height: 100px;
+  width: 100px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#child img {
+  height: 4vh;
+  width: 20vw;
+}
+#signIn {
+  position: absolute;
+  right: 20px;
+}
+
+.centerNav {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+  display: flex;
+  gap: 28px;
+  border: 0.1px solid white;
+  padding: 10px;
+  border-radius: 10px;
+}
+#icons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+}
+#menu-icon {
+  display: none;
+}
+#call-icon {
+  display: none;
+}
+#notification-icon {
+  display: none;
+}
+@media (max-width: 600px) {
+  #icons {
+    display: flex;
+    gap: 15px;
+    position: absolute;
+    right: 3px;
+    top: 20px;
+    font-size: 18px;
+    align-items: center;
+  }
+
+  #menu-icon {
+    display: block;
+    cursor: pointer;
+  }
+
+  #call-icon {
+    display: block;
+  }
+
+  #notification-icon {
+    display: block;
+  }
+
+  .centerNav {
+    display: none;
+  }
+
+  .centerNav.active {
+    display: flex;
+  }
+
+  #signIn {
+    display: none;
+  }
+}
+.content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#orange {
+  font-family: ManRope;
+  color: #e8602e;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+#second {
+  font-family: Neue Machina-Regular;
+  font-size: 37px;
+  padding: 10px;
+  font-weight: 500;
+}
+h1 span {
+  border: 1px solid white;
+  background-color: #e84e1621;
+}
+#third {
+  font-family: ManRope;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-weight: 200;
+}
+h4 span {
+  position: absolute;
+  top: 79%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#fourth {
+  font-family: ManRope;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 35px 35px 0 35px;
+}
+
+h6 span {
+  color: #e8602e;
+}
+
+#subscribe{
+  position: absolute;
+  top: 140%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 10px;
+  padding: 10px;
+  border-radius: 20px;
+  font-family: Veue Machina-Regular;
+  font-size: 16px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  background-color: #111;
+  color: lime;
+  /* cursor: pointer; */
+  transition: all 0.8s linear 0.1ms; /*property_name duration timing-function delay*/
+  animation: jiggle 5s linear 0s infinite alternate;
+}
+button{
+  position: absolute;
+  top: 110%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 10px;
+  padding: 10px;
+  border-radius: 20px;
+  font-family: ManRope;
+
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  background-color: #e84e16;
+  color: white;
+  /* cursor: pointer; */
+  transition: all 0.8s linear 0.1ms; /*property_name duration timing-function delay*/
+  /* animation: jiggle 5s linear 0s infinite alternate; animation-name duration timing function delay iteration direction */
+}
+@keyframes jiggle{
+  from{left:0px;}
+  to{left:600px;}
+}
+button:hover {
+  background: linear-gradient(to right, #343434, #111);
+  font-size: 25px;
+  /* transform:rotate(15deg); */
+  /* transform: scale(2); */
+  /* transform: skew(45deg); */
+}
