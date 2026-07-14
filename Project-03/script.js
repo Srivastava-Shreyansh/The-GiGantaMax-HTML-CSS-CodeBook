@@ -1,0 +1,5 @@
+// alert("Caught in 4k!")
+// confirm("Are you sure you want to continue?")
+// let naam = prompt("Please enter your name:")
+// console.log("Hello, ", naam, "! Welcome to the website.")
+// console.log(window.devicePixelRatio)
