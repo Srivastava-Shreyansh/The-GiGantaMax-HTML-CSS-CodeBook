@@ -1,0 +1,40 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    background-color: #111;
+}
+
+div{
+    width: 200px;
+    height: 200px;
+    border: 10px solid #FED7AA;
+    border-top: 10px solid #F97316;
+    border-radius: 50%;
+    margin: 20px;
+    animation: loader 2s ease-in-out 0s infinite normal;
+}
+
+@keyframes loader {
+    from{
+        transform: rotate(0deg);
+    }
+    to{
+        transform: rotate(360deg);
+    }
+}
+span{
+    color: #fff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 25px;
+    font-weight: 600;
+    font-family: monospace;
+}
