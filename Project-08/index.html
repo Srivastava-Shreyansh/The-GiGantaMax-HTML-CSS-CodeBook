@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SENSEI_SS - SheryJS Playground</title>
+  
+  <!-- SheryJS Styles -->
+  <link rel="stylesheet" href="https://unpkg.com/sheryjs/dist/Shery.css" />
+  <link rel="stylesheet" href="style.css">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1 class="magnet-target">みなさんこんにちは、SENSEI_SSです！</h1>
+    <h2 class="animate-text">This is a sample website created using GSAP, Three.JS & SheryJS</h2>
+  </section>
+
+  <!-- Image Masker Section -->
+  <section class="section">
+    <h3>Image Masking Shader Effect</h3>
+    <div class="img-wrapper">
+      <img id="mask-image" src="https://images.unsplash.com/photo-1786473354593-763ab8d64254?w=800&auto=format&fit=crop&q=80" alt="Gudu-Gudu">
+    </div>
+  </section>
+
+  <!-- Hover with Media Circle Section -->
+  <section class="section">
+    <div id="media-hover-trigger" class="hover-box">
+      <h3>Hover over me to trigger Media Circle</h3>
+    </div>
+  </section>
+
+  <!-- Dedicated 3D Canvas Section -->
+  <section class="section 3d-section">
+    <h3>3D Scene Canvas</h3>
+    <div id="threejs-canvas-container">
+      <!-- Three.js or Spline canvas will attach here -->
+    </div>
+  </section>
+
+  <!-- Dependencies -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.155.0/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/automat/controlkit.js@master/bin/controlKit.min.js"></script>
+  <script type="text/javascript" src="https://unpkg.com/sheryjs/dist/Shery.js"></script>
+
+  <!-- Custom Script -->
+  <script src="script.js"></script>
+</body>
+</html>
