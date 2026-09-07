@@ -1,0 +1,38 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    background-color: #111;
+}
+.marque-wrapper{
+    height: 40vh;
+    width: 100%;
+    display: flex;
+    overflow: hidden;
+}
+.marque-track{
+    height: 100%;
+    width: 50%;
+    flex-shrink: 0;
+    animation: marque 4s linear infinite;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+.marque-track img{
+    height: 50%;
+    object-fit: cover;  
+}
+@keyframes marque{
+    0%{ /*from*/
+        transform: translateX(0);
+    }
+    100%{/*to*/
+        transform: translateX(-100%);
+    }
+}
