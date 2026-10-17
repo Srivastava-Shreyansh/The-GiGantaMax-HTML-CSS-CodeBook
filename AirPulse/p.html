@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AirPulse - Real-Time Air Quality Monitor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    * {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    
+    @keyframes pulse-ring {
+      0% { transform: scale(0.8); opacity: 1; }
+      100% { transform: scale(1.4); opacity: 0; }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    @keyframes glow {
+      0%, 100% { filter: drop-shadow(0 0 20px rgba(34, 197, 94, 0.4)); }
+      50% { filter: drop-shadow(0 0 40px rgba(34, 197, 94, 0.8)); }
+    }
+    
+    @keyframes slide-up {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes data-flow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .animate-pulse-ring {
+      animation: pulse-ring 2s ease-out infinite;
+    }
+    
+    .animate-float {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .animate-glow {
+      animation: glow 2s ease-in-out infinite;
+    }
+    
+    .animate-slide-up {
+      animation: slide-up 0.6s ease-out forwards;
+    }
+    
+    .data-gradient {
+      background: linear-gradient(-45deg, #0f172a, #1e293b, #0f172a, #1e3a5f);
+      background-size: 400% 400%;
+      animation: data-flow 15s ease infinite;
+    }
+    
+    .glass-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    .aqi-ring {
+      stroke-dasharray: 440;
+      stroke-dashoffset: 440;
+      transition: stroke-dashoffset 1.5s ease-out;
+    }
+    
+    .sensor-dot::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: inherit;
+      animation: pulse-ring 2s ease-out infinite;
+    }
+    
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div id="app" class="h-full w-full data-gradient text-white overflow-auto"><!-- Header -->
+   <header class="px-6 py-4 border-b border-white/10">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+     <div class="flex items-center gap-3">
+      <div class="relative">
+       <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center animate-glow">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+       </div>
+      </div>
+      <div>
+       <h1 id="app-title" class="text-xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">AirPulse</h1>
+       <p id="tagline" class="text-xs text-slate-400">Real-Time Air Quality Network</p>
+      </div>
+     </div>
+     <div class="flex items-center gap-4">
+      <div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full glass-card"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> <span class="text-xs text-slate-300">Live Data</span>
+      </div>
+      <div class="text-right">
+       <p class="text-xs text-slate-400">Last Updated</p>
+       <p id="last-update" class="text-sm mono text-emerald-400">--:--:--</p>
+      </div>
+     </div>
+    </div>
+   </header><!-- Alert Banner -->
+   <div id="alert-banner" class="bg-gradient-to-r from-amber-500/20 to-orange-500/20 border-b border-amber-500/30 px-6 py-3 hidden">
+    <div class="max-w-7xl mx-auto flex items-center gap-3">
+     <svg class="w-5 h-5 text-amber-400 flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+     </svg>
+     <p id="alert-text" class="text-sm text-amber-200">Moderate air quality detected. Sensitive groups should limit outdoor activities.</p><button onclick="dismissAlert()" class="ml-auto text-amber-400 hover:text-amber-300 transition-colors">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg></button>
+    </div>
+   </div><!-- Main Content -->
+   <main class="px-6 py-8">
+    <div class="max-w-7xl mx-auto"><!-- Stats Grid -->
+     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8"><!-- Main AQI Card -->
+      <div class="lg:col-span-1 glass-card rounded-3xl p-8 animate-slide-up" style="animation-delay: 0.1s">
+       <div class="text-center">
+        <p class="text-slate-400 text-sm mb-4">Current Air Quality Index</p>
+        <div class="relative inline-block">
+         <svg class="w-48 h-48 transform -rotate-90"><circle cx="96" cy="96" r="70" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="12" /> <circle id="aqi-circle" cx="96" cy="96" r="70" fill="none" stroke="url(#gradient)" stroke-width="12" stroke-linecap="round" class="aqi-ring" /> <defs>
+           <lineargradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#34d399" />
+            <stop offset="100%" stop-color="#22d3ee" />
+           </lineargradient>
+          </defs>
+         </svg>
+         <div class="absolute inset-0 flex flex-col items-center justify-center"><span id="aqi-value" class="text-5xl font-bold mono bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">42</span> <span id="aqi-status" class="text-sm text-emerald-400 font-medium mt-1">Good</span>
+         </div>
+        </div>
+        <div class="mt-6 flex justify-center gap-1">
+         <div class="h-2 w-8 rounded-full bg-emerald-500" title="Good"></div>
+         <div class="h-2 w-8 rounded-full bg-yellow-500" title="Moderate"></div>
+         <div class="h-2 w-8 rounded-full bg-orange-500" title="Unhealthy for Sensitive"></div>
+         <div class="h-2 w-8 rounded-full bg-red-500" title="Unhealthy"></div>
+         <div class="h-2 w-8 rounded-full bg-purple-500" title="Very Unhealthy"></div>
+         <div class="h-2 w-8 rounded-full bg-rose-900" title="Hazardous"></div>
+        </div>
+       </div>
+      </div><!-- Pollutants Grid -->
+      <div class="lg:col-span-2 grid grid-cols-2 md:grid-cols-3 gap-4 animate-slide-up" style="animation-delay: 0.2s">
+       <div class="glass-card rounded-2xl p-5 hover:bg-white/5 transition-all duration-300 group">
+        <div class="flex items-center justify-between mb-3"><span class="text-xs text-slate-400">PM2.5</span> <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400">Normal</span>
+        </div>
+        <p id="pm25-value" class="text-2xl font-bold mono text-white group-hover:text-emerald-400 transition-colors">12</p>
+        <p class="text-xs text-slate-500 mt-1">μg/m³</p>
+        <div class="mt-3 h-1 bg-slate-700 rounded-full overflow-hidden">
+         <div id="pm25-bar" class="h-full bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full transition-all duration-1000" style="width: 24%"></div>
+        </div>
+       </div>
+       <div class="glass-card rounded-2xl p-5 hover:bg-white/5 transition-all duration-300 group">
+        <div class="flex items-center justify-between mb-3"><span class="text-xs text-slate-400">PM10</span> <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400">Normal</span>
+        </div>
+        <p id="pm10-value" class="text-2xl font-bold mono text-white group-hover:text-emerald-400 transition-colors">28</p>
+        <p class="text-xs text-slate-500 mt-1">μg/m³</p>
+        <div class="mt-3 h-1 bg-slate-700 rounded-full overflow-hidden">
+         <div id="pm10-bar" class="h-full bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full transition-all duration-1000" style="width: 28%"></div>
+        </div>
+       </div>
+       <div class="glass-card rounded-2xl p-5 hover:bg-white/5 transition-all duration-300 group">
+        <div class="flex items-center justify-between mb-3"><span class="text-xs text-slate-400">O₃</span> <span class="text-xs px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-400">Moderate</span>
+        </div>
+        <p id="o3-value" class="text-2xl font-bold mono text-white group-hover:text-yellow-400 transition-colors">68</p>
+        <p class="text-xs text-slate-500 mt-1">ppb</p>
+        <div class="mt-3 h-1 bg-slate-700 rounded-full overflow-hidden">
+         <div id="o3-bar" class="h-full bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full transition-all duration-1000" style="width: 68%"></div>
+        </div>
+       </div>
+       <div class="glass-card rounded-2xl p-5 hover:bg-white/5 transition-all duration-300 group">
+        <div class="flex items-center justify-between mb-3"><span class="text-xs text-slate-400">NO₂</span> <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400">Normal</span>
+        </div>
+        <p id="no2-value" class="text-2xl font-bold mono text-white group-hover:text-emerald-400 transition-colors">15</p>
+        <p class="text-xs text-slate-500 mt-1">ppb</p>
+        <div class="mt-3 h-1 bg-slate-700 rounded-full overflow-hidden">
+         <div id="no2-bar" class="h-full bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full transition-all duration-1000" style="width: 15%"></div>
+        </div>
+       </div>
+       <div class="glass-card rounded-2xl p-5 hover:bg-white/5 transition-all duration-300 group">
+        <div class="flex items-center justify-between mb-3"><span class="text-xs text-slate-400">CO</span> <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400">Normal</span>
+        </div>
+        <p id="co-value" class="text-2xl font-bold mono text-white group-hover:text-emerald-400 transition-colors">0.8</p>
+        <p class="text-xs text-slate-500 mt-1">ppm</p>
+        <div class="mt-3 h-1 bg-slate-700 rounded-full overflow-hidden">
+         <div id="co-bar" class="h-full bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full transition-all duration-1000" style="width: 8%"></div>
+        </div>
+       </div>
+       <div class="glass-card rounded-2xl p-5 hover:bg-white/5 transition-all duration-300 group">
+        <div class="flex items-center justify-between mb-3"><span class="text-xs text-slate-400">SO₂</span> <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400">Normal</span>
+        </div>
+        <p id="so2-value" class="text-2xl font-bold mono text-white group-hover:text-emerald-400 transition-colors">4</p>
+        <p class="text-xs text-slate-500 mt-1">ppb</p>
+        <div class="mt-3 h-1 bg-slate-700 rounded-full overflow-hidden">
+         <div id="so2-bar" class="h-full bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full transition-all duration-1000" style="width: 4%"></div>
+        </div>
+       </div>
+      </div>
+     </div><!-- Sensor Network & Health Advisory -->
+     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8"><!-- Sensor Network Map -->
+      <div class="glass-card rounded-3xl p-6 animate-slide-up" style="animation-delay: 0.3s">
+       <div class="flex items-center justify-between mb-6">
+        <div>
+         <h2 class="text-lg font-semibold text-white">Sensor Network</h2>
+         <p class="text-xs text-slate-400">12 active sensors across the region</p>
+        </div><button class="px-3 py-1.5 text-xs rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition-colors"> View All </button>
+       </div><!-- Simplified Map Visualization -->
+       <div class="relative h-64 bg-slate-800/50 rounded-2xl overflow-hidden"><!-- Grid Pattern -->
+        <svg class="absolute inset-0 w-full h-full opacity-20"><defs>
+          <pattern id="grid" width="40" height="40" patternunits="userSpaceOnUse">
+           <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" stroke-width="0.5" />
+          </pattern>
+         </defs> <rect width="100%" height="100%" fill="url(#grid)" />
+        </svg><!-- Sensor Points -->
+        <div class="absolute top-[15%] left-[20%] group cursor-pointer">
+         <div class="w-4 h-4 rounded-full bg-emerald-500 sensor-dot relative">
+          <div class="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 rounded bg-slate-900 text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+           Sensor A1 - AQI: 38
+          </div>
+         </div>
+        </div>
+        <div class="absolute top-[30%] left-[45%] group cursor-pointer">
+         <div class="w-4 h-4 rounded-full bg-emerald-500 sensor-dot relative">
+          <div class="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 rounded bg-slate-900 text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+           Sensor B2 - AQI: 42
+          </div>
+         </div>
+        </div>
+        <div class="absolute top-[25%] left-[70%] group cursor-pointer">
+         <div class="w-4 h-4 rounded-full bg-yellow-500 sensor-dot relative">
+          <div class="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 rounded bg-slate-900 text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+           Sensor C3 - AQI: 78
+          </div>
+         </div>
+        </div>
+        <div class="absolute top-[55%] left-[25%] group cursor-pointer">
+         <div class="w-4 h-4 rounded-full bg-emerald-500 sensor-dot relative">
+          <div class="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 rounded bg-slate-900 text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+           Sensor D4 - AQI: 35
+          </div>
+         </div>
+        </div>
+        <div class="absolute top-[60%] left-[55%] group cursor-pointer">
+         <div class="w-4 h-4 rounded-full bg-emerald-500 sensor-dot relative">
+          <div class="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 rounded bg-slate-900 text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+           Sensor E5 - AQI: 45
+          </div>
+         </div>
+        </div>
+        <div class="absolute top-[75%] left-[80%] group cursor-pointer">
+         <div class="w-4 h-4 rounded-full bg-orange-500 sensor-dot relative">
+          <div class="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 rounded bg-slate-900 text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+           Sensor F6 - AQI: 112
+          </div>
+         </div>
+        </div><!-- Legend -->
+        <div class="absolute bottom-3 left-3 flex items-center gap-4 text-xs">
+         <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> <span class="text-slate-400">Good</span>
+         </div>
+         <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-yellow-500"></span> <span class="text-slate-400">Moderate</span>
+         </div>
+         <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-orange-500"></span> <span class="text-slate-400">Unhealthy</span>
+         </div>
+        </div>
+       </div>
+      </div><!-- Health Advisory -->
+      <div class="glass-card rounded-3xl p-6 animate-slide-up" style="animation-delay: 0.4s">
+       <div class="flex items-center justify-between mb-6">
+        <div>
+         <h2 class="text-lg font-semibold text-white">Health Advisory</h2>
+         <p class="text-xs text-slate-400">Personalized recommendations</p>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center">
+         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+         </svg>
+        </div>
+       </div>
+       <div class="space-y-4">
+        <div class="flex items-start gap-4 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+         <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+          <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+         </div>
+         <div>
+          <p class="text-sm font-medium text-emerald-400">General Population</p>
+          <p class="text-xs text-slate-400 mt-1">Air quality is satisfactory. Enjoy outdoor activities!</p>
+         </div>
+        </div>
+        <div class="flex items-start gap-4 p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/20">
+         <div class="w-8 h-8 rounded-lg bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
+          <svg class="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+         </div>
+         <div>
+          <p class="text-sm font-medium text-yellow-400">Sensitive Groups</p>
+          <p class="text-xs text-slate-400 mt-1">Consider reducing prolonged outdoor exertion if you experience symptoms.</p>
+         </div>
+        </div>
+        <div class="flex items-start gap-4 p-4 rounded-xl bg-slate-500/10 border border-slate-500/20">
+         <div class="w-8 h-8 rounded-lg bg-slate-500/20 flex items-center justify-center flex-shrink-0">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+         </div>
+         <div>
+          <p class="text-sm font-medium text-slate-300">Tips</p>
+          <p class="text-xs text-slate-400 mt-1">Keep windows open for natural ventilation during good air quality hours.</p>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div><!-- 24-Hour Trend Chart -->
+     <div class="glass-card rounded-3xl p-6 mb-8 animate-slide-up" style="animation-delay: 0.5s">
+      <div class="flex items-center justify-between mb-6">
+       <div>
+        <h2 class="text-lg font-semibold text-white">24-Hour Trend</h2>
+        <p class="text-xs text-slate-400">Air quality index over time</p>
+       </div>
+       <div class="flex gap-2"><button class="px-3 py-1.5 text-xs rounded-lg bg-emerald-500/20 text-emerald-400">24H</button> <button class="px-3 py-1.5 text-xs rounded-lg bg-slate-700/50 text-slate-400 hover:bg-slate-700 transition-colors">7D</button> <button class="px-3 py-1.5 text-xs rounded-lg bg-slate-700/50 text-slate-400 hover:bg-slate-700 transition-colors">30D</button>
+       </div>
+      </div><!-- Chart -->
+      <div class="relative h-48">
+       <svg class="w-full h-full" viewbox="0 0 800 200" preserveaspectratio="none"><!-- Grid Lines --> <line x1="0" y1="50" x2="800" y2="50" stroke="rgba(255,255,255,0.1)" stroke-dasharray="4" /> <line x1="0" y1="100" x2="800" y2="100" stroke="rgba(255,255,255,0.1)" stroke-dasharray="4" /> <line x1="0" y1="150" x2="800" y2="150" stroke="rgba(255,255,255,0.1)" stroke-dasharray="4" /> <!-- Area Fill --> <defs>
+         <lineargradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(52, 211, 153, 0.3)" />
+          <stop offset="100%" stop-color="rgba(52, 211, 153, 0)" />
+         </lineargradient>
+        </defs> <path id="chart-area" fill="url(#chartGradient)" d="M0,200 L0,140 C50,135 100,128 150,130 C200,132 250,125 300,120 C350,115 400,118 450,125 C500,132 550,128 600,122 C650,116 700,120 750,125 L800,128 L800,200 Z" /> <!-- Line --> <path id="chart-line" fill="none" stroke="url(#gradient)" stroke-width="3" stroke-linecap="round" d="M0,140 C50,135 100,128 150,130 C200,132 250,125 300,120 C350,115 400,118 450,125 C500,132 550,128 600,122 C650,116 700,120 750,125 L800,128" />
+       </svg><!-- Y-Axis Labels -->
+       <div class="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-slate-500 mono"><span>150</span> <span>100</span> <span>50</span> <span>0</span>
+       </div><!-- X-Axis Labels -->
+       <div class="absolute bottom-0 left-8 right-0 flex justify-between text-xs text-slate-500 mono transform translate-y-5"><span>00:00</span> <span>06:00</span> <span>12:00</span> <span>18:00</span> <span>Now</span>
+       </div>
+      </div>
+     </div><!-- Bottom Stats -->
+     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 animate-slide-up" style="animation-delay: 0.6s">
+      <div class="glass-card rounded-2xl p-5 text-center">
+       <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+        </svg>
+       </div>
+       <p class="text-2xl font-bold mono text-white">72%</p>
+       <p class="text-xs text-slate-400 mt-1">Humidity</p>
+      </div>
+      <div class="glass-card rounded-2xl p-5 text-center">
+       <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+       </div>
+       <p class="text-2xl font-bold mono text-white">28°C</p>
+       <p class="text-xs text-slate-400 mt-1">Temperature</p>
+      </div>
+      <div class="glass-card rounded-2xl p-5 text-center">
+       <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+       </div>
+       <p class="text-2xl font-bold mono text-white">12 km/h</p>
+       <p class="text-xs text-slate-400 mt-1">Wind Speed</p>
+      </div>
+      <div class="glass-card rounded-2xl p-5 text-center">
+       <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+       </div>
+       <p class="text-2xl font-bold mono text-white">12</p>
+       <p class="text-xs text-slate-400 mt-1">Active Sensors</p>
+      </div>
+     </div>
+    </div>
+   </main><!-- Footer -->
+   <footer class="px-6 py-6 border-t border-white/10 mt-8">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+     <p class="text-xs text-slate-500">© 2024 AirPulse. Affordable air quality monitoring for everyone.</p>
+     <div class="flex items-center gap-6"><a href="#" class="text-xs text-slate-400 hover:text-emerald-400 transition-colors">API Access</a> <a href="#" class="text-xs text-slate-400 hover:text-emerald-400 transition-colors">Documentation</a> <a href="#" class="text-xs text-slate-400 hover:text-emerald-400 transition-colors">Contact</a>
+     </div>
+    </div>
+   </footer>
+  </div>
+  <script>
+  // ===============================
+  // Default configuration
+  // ===============================
+  const defaultConfig = {
+    app_title: 'AirPulse',
+    tagline: 'Real-Time Air Quality Network',
+    alert_message:
+      'Moderate air quality detected. Sensitive groups should limit outdoor activities.',
+    primary_color: '#34d399',
+    secondary_color: '#22d3ee',
+    background_color: '#0f172a',
+    text_color: '#ffffff',
+    accent_color: '#f59e0b'
+  };
+
+  let config = { ...defaultConfig };
+
+  // ===============================
+  // UI Update Function
+  // ===============================
+  function updateUI() {
+    document.getElementById('app-title').textContent =
+      config.app_title;
+
+    document.getElementById('tagline').textContent =
+      config.tagline;
+
+    document.getElementById('alert-text').textContent =
+      config.alert_message;
+  }
+
+  // ===============================
+  // AQI Status Helper
+  // ===============================
+  function getAQIStatus(aqi) {
+    if (aqi <= 50)
+      return { text: "Good", color: "#34d399" };
+    if (aqi <= 100)
+      return { text: "Moderate", color: "#facc15" };
+    if (aqi <= 150)
+      return { text: "Unhealthy (Sensitive)", color: "#fb923c" };
+    if (aqi <= 200)
+      return { text: "Unhealthy", color: "#ef4444" };
+
+    return { text: "Hazardous", color: "#7f1d1d" };
+  }
+
+  // ===============================
+  // Real-time Data Simulation
+  // ===============================
+  function updateData() {
+
+    // Update time
+    const now = new Date();
+    document.getElementById("last-update").textContent =
+      now.toLocaleTimeString();
+
+    // Simulated AQI
+    const baseAqi = 42;
+    const variance = Math.floor(Math.random() * 20) - 10;
+    const newAqi = Math.max(0, Math.min(500, baseAqi + variance));
+
+    document.getElementById("aqi-value").textContent = newAqi;
+
+    // Update AQI status
+    const status = getAQIStatus(newAqi);
+    const statusEl = document.getElementById("aqi-status");
+
+    statusEl.textContent = status.text;
+    statusEl.style.color = status.color;
+
+    // ===============================
+    // AQI Ring Animation (FIXED)
+    // ===============================
+    const circle = document.getElementById("aqi-circle");
+    const radius = 70;
+    const circumference = 2 * Math.PI * radius;
+
+    const progress = newAqi / 500; // AQI scale
+    const offset = circumference - progress * circumference;
+
+    circle.style.strokeDashoffset = offset;
+  }
+
+  // ===============================
+  // Alert Close Button
+  // ===============================
+  function dismissAlert() {
+    document
+      .getElementById("alert-banner")
+      .classList.add("hidden");
+  }
+
+  // ===============================
+  // Auto Update Every 3 Seconds
+  // ===============================
+  setInterval(updateData, 3000);
+
+  // Initial Load
+  updateUI();
+  updateData();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cb1caf2620691e8',t:'MTc3MDYyMzYwNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
